@@ -1,0 +1,277 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>db-unibo</groupId>
+  <artifactId>db-unibo</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  	<!-- ============ -->
+	<!-- Opzioni base -->
+	<!-- ============ -->
+	<properties>
+		<jdk.source>1.7</jdk.source>
+		<jdk.target>1.7</jdk.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Dipendenti dal DB -->
+		<db.name>NOMEDB</db.name>
+		<db.persistence-name>NOMEDB</db.persistence-name>
+
+		<!-- Opzioni base -->
+		<db.package.name>com.NOMEAZIENDA.db.${db.name}</db.package.name>
+		<db.package.path>com/NOMEAZIENDA/db/${db.name}</db.package.path>
+
+		<db.hibernate-cfg-xml.path>src/test/resources/hibernate.cfg.xml</db.hibernate-cfg-xml.path>
+		<db.hibernate-reveng-xml.path>src/test/resources//hibernate.reveng.xml</db.hibernate-reveng-xml.path>
+		<liquibase-changelog.path>src/test/resources/changelog</liquibase-changelog.path>
+
+		<!-- Generici -->
+		<junit.version>3.8.1</junit.version>
+		<log4j.version>1.2.17</log4j.version>
+		<commons-io.version>2.4</commons-io.version>
+		<commons-logging.version>1.2</commons-logging.version>
+		<commons-collections.version>3.2.2</commons-collections.version>
+		<freemarker.version>2.3.8</freemarker.version>
+
+		<!-- Persistenza -->
+		<mysql-connector.version>5.1.38</mysql-connector.version>
+		<jta.version>1.1</jta.version>
+		<hibernate-core.version>4.3.11.Final</hibernate-core.version>
+		<hibernate-entitymanager.version>4.3.11.Final</hibernate-entitymanager.version>
+		<hibernate-commons-annotations.version>4.0.5.Final</hibernate-commons-annotations.version>
+		<hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
+		<hibernate-tools.version>4.3.2.Final</hibernate-tools.version>
+
+		<persistence-api.version>1.0.2</persistence-api.version>
+		<ejb-api.version>3.0</ejb-api.version>
+
+		<!-- Maven Plugin -->
+		<maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+		<maven-source-plugin.version>3.0.0</maven-source-plugin.version>
+		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+
+		<!-- Versionamento DB -->
+		<liquibase.plugin.version>3.4.2</liquibase.plugin.version>
+
+	</properties>
+  
+  
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <plugins>
+		<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution> <!-- mvn antrun:run@entities -->
+						<id>entities</id>
+						<phase>none</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo message="Start generating entities and DAO .." />
+								<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" />
+								<hibernatetool>
+									<jdbcconfiguration configurationfile="${db.hibernate-cfg-xml.path}"
+										revengfile="${db.hibernate-reveng-xml.path}" packagename="${db.package.name}"
+										detectonetoone="true" detectmanytomany="true"
+										preferbasiccompositeids="true" detectoptimisticlock="true" />
+									<hbm2java destdir="src/main/java" jdk5="true" ejb3="true" />
+									<hbm2dao destdir="src/main/java" jdk5="true" ejb3="true" />
+								</hibernatetool>
+								<echo message="End generating entities and DAO" />
+
+								<echo message="Start modifiing entities .." />
+								<replaceregexp match='@Table.name="(.*)"'
+									replace='(name="${db.persistence-name}_\1")@Table(name="\1"'
+									flags="g">
+									<fileset dir="src/main/java/${db.package.path}"
+										includes="*.java" />
+								</replaceregexp>
+
+								<echo message="End modifiing entities" />
+
+								<echo message="Start modifiing homes .." />
+
+								<replace dir="src/main/java/${db.package.path}"
+									value='@PersistenceContext(unitName="${db.persistence-name}")'>
+									<include name="**/*Home.java" />
+									<replacetoken>@PersistenceContext</replacetoken>
+								</replace>
+								<replaceregexp match='public class ([a-zA-Z]*)'
+									replace='(name="${db.persistence-name}_\1") ${line.separator}public class \1'
+									flags="g">
+									<fileset dir="src/main/java/${db.package.path}"
+										includes="*Home.java" />
+								</replaceregexp>
+
+								<echo message="End modifiing homes .." />
+
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>${mysql-connector.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-core</artifactId>
+						<version>${hibernate-core.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-entitymanager</artifactId>
+						<version>${hibernate-entitymanager.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.hibernate.common</groupId>
+						<artifactId>hibernate-commons-annotations</artifactId>
+						<version>${hibernate-commons-annotations.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.hibernate.javax.persistence</groupId>
+						<artifactId>hibernate-jpa-2.1-api</artifactId>
+						<version>${hibernate-jpa-2.1-api.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-tools</artifactId>
+						<version>${hibernate-tools.version}</version>
+						<exclusions>
+							<exclusion>
+								<groupId>*</groupId>
+								<artifactId>*</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
+					<dependency>
+						<groupId>javax.transaction</groupId>
+						<artifactId>jta</artifactId>
+						<version>${jta.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>freemarker</groupId>
+						<artifactId>freemarker</artifactId>
+						<version>${freemarker.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+						<version>${commons-logging.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>commons-collections</groupId>
+						<artifactId>commons-collections</artifactId>
+						<version>${commons-collections.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${jdk.source}</source>
+					<target>${jdk.target}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven-source-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven-javadoc-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+    </plugins>
+    
+    
+    
+  </build>
+  
+      <distributionManagement>
+        <repository>
+            <id>internal</id>
+            <url>file://${project.build.directory}/mvn-repo</url>
+        </repository>
+    </distributionManagement>
+    
+    
+    <dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql-connector.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons-logging.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>${persistence-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate-core.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.ejb</groupId>
+			<artifactId>ejb-api</artifactId>
+			<version>3.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+    
+</project>
