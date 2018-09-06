@@ -1,10 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>db-unibo</groupId>
-  <artifactId>db-unibo</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  
-  	<!-- ============ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>db-unibo</groupId>
+	<artifactId>db-unibo</artifactId>
+	<version>0.0.2</version>
+
+	<!-- ============ -->
 	<!-- Opzioni base -->
 	<!-- ============ -->
 	<properties>
@@ -13,12 +15,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Dipendenti dal DB -->
-		<db.name>NOMEDB</db.name>
-		<db.persistence-name>NOMEDB</db.persistence-name>
+		<db.name>unibo</db.name>
+		<db.persistence-name>unibo</db.persistence-name>
 
 		<!-- Opzioni base -->
-		<db.package.name>com.NOMEAZIENDA.db.${db.name}</db.package.name>
-		<db.package.path>com/NOMEAZIENDA/db/${db.name}</db.package.path>
+		<db.package.name>it.unibo.db.${db.name}</db.package.name>
+		<db.package.path>it/unibo/db/${db.name}</db.package.path>
 
 		<db.hibernate-cfg-xml.path>src/test/resources/hibernate.cfg.xml</db.hibernate-cfg-xml.path>
 		<db.hibernate-reveng-xml.path>src/test/resources//hibernate.reveng.xml</db.hibernate-reveng-xml.path>
@@ -53,12 +55,12 @@
 		<liquibase.plugin.version>3.4.2</liquibase.plugin.version>
 
 	</properties>
-  
-  
-  <build>
-    <sourceDirectory>src/main/java</sourceDirectory>
-    <plugins>
-		<plugin>
+
+<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<plugins>
+
+			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.8</version>
 				<executions>
@@ -94,11 +96,13 @@
 
 								<echo message="Start modifiing homes .." />
 
+
 								<replace dir="src/main/java/${db.package.path}"
 									value='@PersistenceContext(unitName="${db.persistence-name}")'>
 									<include name="**/*Home.java" />
 									<replacetoken>@PersistenceContext</replacetoken>
 								</replace>
+								
 								<replaceregexp match='public class ([a-zA-Z]*)'
 									replace='(name="${db.persistence-name}_\1") ${line.separator}public class \1'
 									flags="g">
@@ -107,6 +111,12 @@
 								</replaceregexp>
 
 								<echo message="End modifiing homes .." />
+
+
+
+								<!-- fine aggiunta per problema hibernate-view -->
+
+								<echo message="End modifing for viste" />
 
 							</target>
 						</configuration>
@@ -209,21 +219,12 @@
 					</execution>
 				</executions>
 			</plugin>
-    </plugins>
-    
-    
-    
-  </build>
-  
-      <distributionManagement>
-        <repository>
-            <id>internal</id>
-            <url>file://${project.build.directory}/mvn-repo</url>
-        </repository>
-    </distributionManagement>
-    
-    
-    <dependencies>
+
+		</plugins>
+
+	</build>
+
+	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -273,5 +274,5 @@
 		</dependency>
 
 	</dependencies>
-    
 </project>
+
