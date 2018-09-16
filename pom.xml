@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>db-unibo</groupId>
 	<artifactId>db-unibo</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.4</version>
 
 	<!-- ============ -->
 	<!-- Opzioni base -->
@@ -15,12 +15,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Dipendenti dal DB -->
-		<db.name>unibo</db.name>
-		<db.persistence-name>unibo</db.persistence-name>
+		<db.name>unibodb</db.name>
+		<db.persistence-name>unibodb</db.persistence-name>
 
 		<!-- Opzioni base -->
-		<db.package.name>it.unibo.db.${db.name}</db.package.name>
-		<db.package.path>it/unibo/db/${db.name}</db.package.path>
+		<db.package.name>it.entities.db.${db.name}</db.package.name>
+		<db.package.path>it/entities/db/${db.name}</db.package.path>
 
 		<db.hibernate-cfg-xml.path>src/test/resources/hibernate.cfg.xml</db.hibernate-cfg-xml.path>
 		<db.hibernate-reveng-xml.path>src/test/resources//hibernate.reveng.xml</db.hibernate-reveng-xml.path>
