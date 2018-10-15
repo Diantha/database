@@ -1,5 +1,5 @@
-package it.unibo.db.unibo;
-// Generated 6-set-2018 18.31.48 by Hibernate Tools 4.3.2-SNAPSHOT
+package it.entities.db.unibodb;
+// Generated Oct 15, 2018 11:09:15 PM by Hibernate Tools 4.3.2-SNAPSHOT
 
 
 import javax.ejb.Stateless;
@@ -9,20 +9,20 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Home object for domain model class Credenziali.
- * @see it.unibo.db.unibo.Credenziali
+ * Home object for domain model class Utente.
+ * @see it.entities.db.unibodb.Utente
  * @author Hibernate Tools
  */
 @Stateless
-(name="unibo_CredenzialiHome") 
-public class CredenzialiHome {
+(name="unibodb_UtenteHome") 
+public class UtenteHome {
 
-    private static final Log log = LogFactory.getLog(CredenzialiHome.class);
+    private static final Log log = LogFactory.getLog(UtenteHome.class);
 
-    @PersistenceContext(unitName="unibo") private EntityManager entityManager;
+    @PersistenceContext(unitName="unibodb") private EntityManager entityManager;
     
-    public void persist(Credenziali transientInstance) {
-        log.debug("persisting Credenziali instance");
+    public void persist(Utente transientInstance) {
+        log.debug("persisting Utente instance");
         try {
             entityManager.persist(transientInstance);
             log.debug("persist successful");
@@ -33,8 +33,8 @@ public class CredenzialiHome {
         }
     }
     
-    public void remove(Credenziali persistentInstance) {
-        log.debug("removing Credenziali instance");
+    public void remove(Utente persistentInstance) {
+        log.debug("removing Utente instance");
         try {
             entityManager.remove(persistentInstance);
             log.debug("remove successful");
@@ -45,10 +45,10 @@ public class CredenzialiHome {
         }
     }
     
-    public Credenziali merge(Credenziali detachedInstance) {
-        log.debug("merging Credenziali instance");
+    public Utente merge(Utente detachedInstance) {
+        log.debug("merging Utente instance");
         try {
-            Credenziali result = entityManager.merge(detachedInstance);
+            Utente result = entityManager.merge(detachedInstance);
             log.debug("merge successful");
             return result;
         }
@@ -58,10 +58,10 @@ public class CredenzialiHome {
         }
     }
     
-    public Credenziali findById( Integer id) {
-        log.debug("getting Credenziali instance with id: " + id);
+    public Utente findById( Integer id) {
+        log.debug("getting Utente instance with id: " + id);
         try {
-            Credenziali instance = entityManager.find(Credenziali.class, id);
+            Utente instance = entityManager.find(Utente.class, id);
             log.debug("get successful");
             return instance;
         }

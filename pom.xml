@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>db-unibo</groupId>
 	<artifactId>db-unibo</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5</version>
 
 	<!-- ============ -->
 	<!-- Opzioni base -->
@@ -24,7 +24,7 @@
 
 		<db.hibernate-cfg-xml.path>src/test/resources/hibernate.cfg.xml</db.hibernate-cfg-xml.path>
 		<db.hibernate-reveng-xml.path>src/test/resources//hibernate.reveng.xml</db.hibernate-reveng-xml.path>
-		<liquibase-changelog.path>src/test/resources/changelog</liquibase-changelog.path>
+		<!-- <liquibase-changelog.path>src/test/resources/changelog</liquibase-changelog.path> -->
 
 		<!-- Generici -->
 		<junit.version>3.8.1</junit.version>
